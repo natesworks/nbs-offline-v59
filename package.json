@@ -1,0 +1,17 @@
+{
+  "name": "nbsoffline-agent",
+  "version": "1.0.0",
+  "description": "Frida agent written in TypeScript",
+  "private": true,
+  "main": "agent/index.ts",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "npx esbuild agent/init.ts --bundle --format=iife --platform=neutral --target=es2020 --outfile=script.js"
+  },
+  "devDependencies": {
+    "@types/frida-gum": "^18.3.1",
+    "@types/node": "^18.14.0",
+    "esbuild": "0.25.9",
+    "frida-compile": "^16.1.8"
+  }
+}
