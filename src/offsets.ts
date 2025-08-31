@@ -1,7 +1,11 @@
 export enum Offsets {
-    ServerConnectionUpdate,
-    HasConnectFailed,
-    MessageManagerReceiveMessage,
+    ServerConnectionUpdate = 0x45fa98,
+    HasConnectFailed = Process.pointerSize,
+    State = 16,
+    GetMessageType = Process.pointerSize * 5,
+    Destruct = Process.pointerSize * 7,
+    Decode = 3 * Process.pointerSize,
+    MessageManagerReceiveMessage = 0x0,
     HomePageStartGame,
     MessagingSend,
     NativeFontFormatString,
@@ -15,8 +19,4 @@ export enum Offsets {
     PayloadPtr,
     OperatorNew,
     StringConstructor,
-    State,
-    GetMessageType = Process.pointerSize * 5,
-    Destruct = Process.pointerSize * 7,
-    Decode = 3 * Process.pointerSize
 }

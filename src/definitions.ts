@@ -1,9 +1,11 @@
 import { Offsets } from "./offsets.js";
 import { Player } from "./player.js";
 
-export const base = Module.getBaseAddress("libg.so");
+export let base = NULL;
 
-export const malloc = new NativeFunction(Module.getExportByName('libc.so', 'malloc'), 'pointer', ['uint']);
+export const libc = Process.getModuleByName('libc.so');;
+
+export const malloc = new NativeFunction(libc.getExportByName('malloc'), 'pointer', ['uint']);
 
 export const createMessageByType = new NativeFunction(base.add(Offsets.CreateMessageByType), "pointer", ["int", "int"]);
 export const operator_new = new NativeFunction(base.add(Offsets.OperatorNew), "pointer", ["int"]);
@@ -12,10 +14,13 @@ export const stringCtor = new NativeFunction(base.add(Offsets.StringConstructor)
 
 export let player = new Player();
 
-export const credits = `NBS Offline v2.2
+export function setBase(ptr : NativePointer) {
+  base = ptr;
+}
+
+export const credits = `NBS Offline v1
 
 Made by Natesworks 
-Contact: contact@natesworks.com
 Discord: dsc.gg/nbsoffline
 
 💙THANKS TO💙
