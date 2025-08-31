@@ -7,14 +7,21 @@ export const libc = Process.getModuleByName('libc.so');;
 
 export const malloc = new NativeFunction(libc.getExportByName('malloc'), 'pointer', ['uint']);
 
-export const createMessageByType = new NativeFunction(base.add(Offsets.CreateMessageByType), "pointer", ["int", "int"]);
-export const operator_new = new NativeFunction(base.add(Offsets.OperatorNew), "pointer", ["int"]);
-export const messageManagerReceiveMessage = new NativeFunction(base.add(Offsets.MessageManagerReceiveMessage), "int", ["pointer", "pointer"]);
-export const stringCtor = new NativeFunction(base.add(Offsets.StringConstructor), "pointer", ["pointer", "pointer"]);
-
 export let player = new Player();
 
-export function setBase(ptr : NativePointer) {
+export let createMessageByType: NativeFunction<NativePointer, [number, number]>;
+export let operator_new: NativeFunction<NativePointer, [number]>;
+export let messageManagerReceiveMessage: NativeFunction<number, [NativePointerValue, NativePointerValue]>;
+export let stringCtor: NativeFunction<NativePointer, [NativePointer, NativePointer]>;
+
+export function load() {
+  createMessageByType = new NativeFunction(base.add(Offsets.CreateMessageByType), "pointer", ["int", "int"]);
+  operator_new = new NativeFunction(base.add(Offsets.OperatorNew), "pointer", ["int"]);
+  messageManagerReceiveMessage = new NativeFunction(base.add(Offsets.MessageManagerReceiveMessage), "int", ["pointer", "pointer"]);
+  stringCtor = new NativeFunction(base.add(Offsets.StringConstructor), "pointer", ["pointer", "pointer"]);
+}
+
+export function setBase(ptr: NativePointer) {
   base = ptr;
 }
 

@@ -1,4 +1,4 @@
-import { base, setBase } from "./definitions.js";
+import { base, load, setBase } from "./definitions.js";
 import { installHooks } from "./mainHooks.js";
 
 function waitForModule(name: string, intervalMs = 10): Promise<NativePointer> {
@@ -16,5 +16,6 @@ function waitForModule(name: string, intervalMs = 10): Promise<NativePointer> {
 (async () => {
     setBase(await waitForModule("libg.so"));
     console.log(`libg.so loaded at: ${base}`);
+    load();
     installHooks();
 })();
