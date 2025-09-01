@@ -1,3 +1,7 @@
-# NBS Offline Base
+# NBS Offline V62
 
-A simple base for an offline client.
+An offline client by Natesworks. 
+
+## Credits
+
+OwnHomeDataMessage structure by Soufgame (BSVS).
