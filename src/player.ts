@@ -2,7 +2,7 @@ import { Brawler } from "./brawler.js";
 
 export class Player {
     name = "Natesworks";
-    token = "";
+    token = "pXrvhSEPBUQo70jmePrPVQmHJHUQMrpWav82U1kH";
     id = [0, 1];
     registered = true;
     namecolor = 9;

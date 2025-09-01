@@ -1,7 +1,7 @@
 import { Offsets } from "./offsets.js";
 import { base, createMessageByType, malloc, messageManagerReceiveMessage, operator_new } from "./definitions.js";
 import { PiranhaMessage } from "./piranhamessage.js";
-import { getMessageManagerInstance } from "./util.js";
+import { decodeString, getMessageManagerInstance } from "./util.js";
 
 export class Messaging {
     static sendOfflineMessage(id: number, payload: number[]): NativePointer {
