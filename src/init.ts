@@ -1,4 +1,4 @@
-import { base, load, setBase } from "./definitions.js";
+import { base, load, player, setBase } from "./definitions.js";
 import { installHooks } from "./mainHooks.js";
 
 function waitForModule(name: string, intervalMs = 10): Promise<NativePointer> {
@@ -19,3 +19,10 @@ function waitForModule(name: string, intervalMs = 10): Promise<NativePointer> {
     load();
     installHooks();
 })();
+
+for (const brawlerKey in player.ownedBrawlers) {
+    const brawler = player.ownedBrawlers[brawlerKey];
+    for (const skin of brawler.skins) {
+        player.ownedSkins.push(skin);
+    }
+}

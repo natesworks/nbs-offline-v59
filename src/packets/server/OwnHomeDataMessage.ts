@@ -7,11 +7,11 @@ export class OwnHomeDataMessage {
         let stream = new ByteStream([]);
         const currentTime = Date.now() / 1000 + 3600 * 4;
         console.log("Encoding OHD");
-
-        stream.writeVint(1688816070);
-        stream.writeVint(1191532375);
-        stream.writeVint(2023189);
-        stream.writeVint(73530);
+        
+        stream.writeVint(currentTime);
+        stream.writeVint(0);
+        stream.writeVint(0);
+        stream.writeVint(0);
 
         stream.writeVint(player.trophies);
         stream.writeVint(player.highestTrophies);
@@ -200,19 +200,19 @@ export class OwnHomeDataMessage {
 
         for (const event of events) {
             stream.writeVint(-1);
-            stream.writeVint(event.Slot);
-            stream.writeVint(event.Slot);
+            stream.writeVint(event.slot);
+            stream.writeVint(event.slot);
             stream.writeVint(0);
-            stream.writeVint(Math.floor(event.TimeToEnd) - currentTime);
+            stream.writeVint(event.timeToEnd - currentTime);
             stream.writeVint(10);
-            stream.writeDataReference(15, event.MapID);
+            stream.writeDataReference(15, event.mapID);
             stream.writeVint(-1);
             stream.writeVint(2); // MapStatus
             stream.writeString("");
             stream.writeVint(0);
             stream.writeVint(0);
 
-            if ([20, 21, 22, 23, 24, 35, 36].includes(event.Slot) && event.championShipInfo) {
+            if ([20, 21, 22, 23, 24, 35, 36].includes(event.slot) && event.championShipInfo) {
                 stream.writeVint(event.championShipInfo.MaxWins);
             } else {
                 stream.writeVint(0);
@@ -227,7 +227,7 @@ export class OwnHomeDataMessage {
             stream.writeVint(0);
             stream.writeVint(0);
 
-            if ([20, 21, 22, 23, 24, 35, 36].includes(event.Slot) && event.championShipInfo) {
+            if ([20, 21, 22, 23, 24, 35, 36].includes(event.slot) && event.championShipInfo) {
                 stream.writeBoolean(true); // ChoronosTextEntry
                 stream.writeString(event.championShipInfo.ChoronosTextEntry);
                 stream.writeVint(0);
@@ -238,12 +238,12 @@ export class OwnHomeDataMessage {
             stream.writeBoolean(false);
             stream.writeBoolean(false);
 
-            if ([20, 21, 22, 23, 24].includes(event.Slot) && event.championShipInfo) {
+            if ([20, 21, 22, 23, 24].includes(event.slot) && event.championShipInfo) {
                 stream.writeBoolean(true); // LogicGemOffer
                 const offer = event.championShipInfo.LogicGemOffer;
                 stream.writeVint(offer.id);
                 stream.writeVint(offer.amount);
-                stream.writeDataReference(offer.CsvID[0], offer.CsvID[1]);
+                stream.writeDataReference(offer.csvID[0], offer.csvID[1]);
                 stream.writeVint(offer.skinID);
             } else {
                 stream.writeBoolean(false);
@@ -252,7 +252,7 @@ export class OwnHomeDataMessage {
             stream.writeVint(1);
             stream.writeVint(6);
 
-            if ([20, 21, 22, 23, 24, 35, 36].includes(event.Slot) && event.championShipInfo) {
+            if ([20, 21, 22, 23, 24, 35, 36].includes(event.slot) && event.championShipInfo) {
                 stream.writeBoolean(true); // ChronosFileEntry
                 const entry = event.championShipInfo.chronosFileEntry;
                 stream.writeString(entry.scName);
@@ -275,7 +275,7 @@ export class OwnHomeDataMessage {
 
         const brawlerUpgradeCost = [20, 35, 75, 140, 290, 480, 800, 1250, 1875, 2800];
         const shopCoinsPrice = [20, 50, 140, 280];
-        const shopCoinsAmount = [150, 400, 1200, 2600];
+        const shopCoinsAmount = [300, 880, 2040, 4680];
 
         stream.writeVint(brawlerUpgradeCost.length);
         for (const cost of brawlerUpgradeCost) {
@@ -315,7 +315,7 @@ export class OwnHomeDataMessage {
 
         stream.writeLong(player.id[0], player.id[1]);
 
-        stream.writeVint(0); // notification count; looks like crash is after this (not specifically next part)
+        stream.writeVint(0); // notification count
 
         stream.writeVint(1);
         stream.writeBoolean(false);
@@ -362,6 +362,11 @@ export class OwnHomeDataMessage {
 
         // starr drop data
         stream.writeVint(14);
+        for (let i = 0; i < 14; i++) {
+            stream.writeDataReference(80, i);
+            stream.writeVint(-1);
+            stream.writeVint(0);
+        }
         stream.writeVint(0);
         stream.writeInt(-1435281534);
         stream.writeVint(0); // progression step in battles
@@ -403,13 +408,9 @@ export class OwnHomeDataMessage {
         stream.writeVint(-1);
         stream.writeVint(player.coins);
 
-        stream.writeDataReference(5, 8);
-        stream.writeVint(-1);
-        stream.writeVint(player.coins);
-
         stream.writeDataReference(5, 21);
         stream.writeVint(-1);
-        stream.writeVint(-1); // todo star road
+        stream.writeVint(0); // todo star road
 
         stream.writeDataReference(5, 23);
         stream.writeVint(-1);
@@ -429,16 +430,15 @@ export class OwnHomeDataMessage {
             stream.writeVint(brawlerData.highestTrophies);
         }
 
-
         stream.writeVint(0);
 
-        stream.writeVint(0);
+        stream.writeVint(0); // hero power
 
         stream.writeVint(Object.keys(player.ownedBrawlers).length);
         for (const [brawlerID, brawlerData] of Object.entries(player.ownedBrawlers)) {
             stream.writeDataReference(16, Number(brawlerID));
             stream.writeVint(-1);
-            stream.writeVint(brawlerData.powerlevel);
+            stream.writeVint(brawlerData.powerlevel - 1);
         }
 
         stream.writeVint(0); // hero star power gadget and hyper
@@ -466,24 +466,24 @@ export class OwnHomeDataMessage {
         stream.writeVint(0);
         stream.writeVint(0);
 
-        stream.writeVint(player.gems);
-        stream.writeVint(player.gems);
-        stream.writeVint(player.level);
+        stream.writeVint(player.gems);        // Diamonds
+        stream.writeVint(player.gems);        // Free Diamonds
+        stream.writeVint(player.level);       // Player Level
         stream.writeVint(100);
-        stream.writeVint(0);
-        stream.writeVint(100); // battle count
-        stream.writeVint(10); // win count
-        stream.writeVint(80); // lose count
-        stream.writeVint(50); // win/lose streak
-        stream.writeVint(0);
-        stream.writeVint(2); // tutorial state
+        stream.writeVint(0);                  // CumulativePurchasedDiamonds / Level Tier
+        stream.writeVint(100);                // Battle Count
+        stream.writeVint(10);                 // WinCount
+        stream.writeVint(80);                 // LoseCount
+        stream.writeVint(50);                 // WinLoseStreak
+        stream.writeVint(20);                 // NpcWinCount
+        stream.writeVint(0);                  // NpcLoseCount
+        stream.writeVint(2);                  // TutorialState
         stream.writeVint(12);
         stream.writeVint(0);
         stream.writeVint(0);
         stream.writeString("");
         stream.writeVint(0);
         stream.writeVint(0);
-        stream.writeVint(1);
 
         return stream.payload;
     }

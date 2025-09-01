@@ -1,7 +1,7 @@
 interface LogicGemOffer {
   id: number;
   amount: number;
-  CsvID: number[];
+  csvID: number[];
   skinID: number;
 }
 
@@ -18,74 +18,70 @@ interface ChampionShipInfo {
 }
 
 interface Event {
-  Slot: number;
-  TimeToEnd: number;
-  Tokens: number;
-  MapID: number;
-  ClaimedTokens: number[];
+  slot: number;
+  timeToEnd: number;
+  tokens: number;
+  mapID: number;
+  claimedTokens: number[];
   championShipInfo?: ChampionShipInfo;
-}
-
-interface Root {
-  events: Event[];
 }
 
 export const events: Event[] = [
   {
-    Slot: 2,
-    TimeToEnd: 1738226512.052918,
-    Tokens: 10,
-    MapID: 774,
-    ClaimedTokens: []
+    slot: 2,
+    timeToEnd: 1738226512.052918,
+    tokens: 10,
+    mapID: 774,
+    claimedTokens: []
   },
   {
-    Slot: 1,
-    TimeToEnd: 1738269712.0646296,
-    Tokens: 10,
-    MapID: 808,
-    ClaimedTokens: []
+    slot: 1,
+    timeToEnd: 1738269712.0646296,
+    tokens: 10,
+    mapID: 808,
+    claimedTokens: []
   },
   {
-    Slot: 4,
-    TimeToEnd: 1738269712.075367,
-    Tokens: 10,
-    MapID: 719,
-    ClaimedTokens: []
+    slot: 4,
+    timeToEnd: 1738269712.075367,
+    tokens: 10,
+    mapID: 719,
+    claimedTokens: []
   },
   {
-    Slot: 5,
-    TimeToEnd: 1738269712.0861027,
-    Tokens: 10,
-    MapID: 775,
-    ClaimedTokens: []
+    slot: 5,
+    timeToEnd: 1738269712.0861027,
+    tokens: 10,
+    mapID: 775,
+    claimedTokens: []
   },
   {
-    Slot: 6,
-    TimeToEnd: 1727536357.3456142,
-    Tokens: 10,
-    MapID: 638,
-    ClaimedTokens: []
+    slot: 6,
+    timeToEnd: 1727536357.3456142,
+    tokens: 10,
+    mapID: 638,
+    claimedTokens: []
   },
   {
-    Slot: 11,
-    TimeToEnd: 1727536357.3456142,
-    Tokens: 10,
-    MapID: 7,
-    ClaimedTokens: []
+    slot: 11,
+    timeToEnd: 1727536357.3456142,
+    tokens: 10,
+    mapID: 7,
+    claimedTokens: []
   },
   {
-    Slot: 20,
-    TimeToEnd: 1727536357.3456142,
-    Tokens: 10,
-    MapID: 636,
-    ClaimedTokens: [],
+    slot: 20,
+    timeToEnd: 1727536357.3456142,
+    tokens: 10,
+    mapID: 636,
+    claimedTokens: [],
     championShipInfo: {
       MaxWins: 3,
       ChoronosTextEntry: "GRUESOME!",
       LogicGemOffer: {
         id: 4,
         amount: 1,
-        CsvID: [0, 0],
+        csvID: [0, 0],
         skinID: 959
       },
       chronosFileEntry: {
@@ -95,18 +91,18 @@ export const events: Event[] = [
     }
   },
   {
-    Slot: 21,
-    TimeToEnd: 1727536357.3456142,
-    Tokens: 10,
-    MapID: 22,
-    ClaimedTokens: [],
+    slot: 21,
+    timeToEnd: 1727536357.3456142,
+    tokens: 10,
+    mapID: 22,
+    claimedTokens: [],
     championShipInfo: {
       MaxWins: 3,
       ChoronosTextEntry: "GRUESOME!",
       LogicGemOffer: {
         id: 4,
         amount: 1,
-        CsvID: [0, 0],
+        csvID: [0, 0],
         skinID: 959
       },
       chronosFileEntry: {
@@ -116,18 +112,18 @@ export const events: Event[] = [
     }
   },
   {
-    Slot: 22,
-    TimeToEnd: 1727536357.3456142,
-    Tokens: 10,
-    MapID: 19,
-    ClaimedTokens: [],
+    slot: 22,
+    timeToEnd: 1727536357.3456142,
+    tokens: 10,
+    mapID: 19,
+    claimedTokens: [],
     championShipInfo: {
       MaxWins: 3,
       ChoronosTextEntry: "GRUESOME!",
       LogicGemOffer: {
         id: 4,
         amount: 1,
-        CsvID: [0, 0],
+        csvID: [0, 0],
         skinID: 959
       },
       chronosFileEntry: {
@@ -137,18 +133,18 @@ export const events: Event[] = [
     }
   },
   {
-    Slot: 23,
-    TimeToEnd: 1727536357.3456142,
-    Tokens: 10,
-    MapID: 548,
-    ClaimedTokens: [],
+    slot: 23,
+    timeToEnd: 1727536357.3456142,
+    tokens: 10,
+    mapID: 548,
+    claimedTokens: [],
     championShipInfo: {
       MaxWins: 3,
       ChoronosTextEntry: "GRUESOME!",
       LogicGemOffer: {
         id: 4,
         amount: 1,
-        CsvID: [0, 0],
+        csvID: [0, 0],
         skinID: 959
       },
       chronosFileEntry: {
@@ -158,18 +154,18 @@ export const events: Event[] = [
     }
   },
   {
-    Slot: 36,
-    TimeToEnd: 2427536357.3456144,
-    Tokens: 10,
-    MapID: 548,
-    ClaimedTokens: [],
+    slot: 36,
+    timeToEnd: 2427536357.3456144,
+    tokens: 10,
+    mapID: 548,
+    claimedTokens: [],
     championShipInfo: {
       MaxWins: 3,
       ChoronosTextEntry: "GRUESOME!",
       LogicGemOffer: {
         id: 4,
         amount: 1,
-        CsvID: [0, 0],
+        csvID: [0, 0],
         skinID: 959
       },
       chronosFileEntry: {

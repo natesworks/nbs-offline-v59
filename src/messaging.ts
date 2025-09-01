@@ -26,7 +26,9 @@ export class Messaging {
             ["pointer"]
         );
         decode(message);
+        console.log("Message decoded succesfully");
         messageManagerReceiveMessage(getMessageManagerInstance(), message);
+        console.log("Message received");
         return message;
     }
 }

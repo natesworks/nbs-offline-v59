@@ -22,7 +22,7 @@ export class Player {
     selectedBrawlers = [0, 1, 2];
     ownedPins: number[] = [];
     ownedSkins: number[] = [];
-    ownedThumbnails: number[] = [];
+    ownedThumbnails: number[] = [0];
     soloVictories = 0;
     trioVictories = 0; // 3v3s
     duoVictories = 0;

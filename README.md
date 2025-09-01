@@ -4,4 +4,4 @@ An offline client by Natesworks.
 
 ## Credits
 
-OwnHomeDataMessage structure by Soufgame (BSVS).
+OwnHomeDataMessage structure by Sparky (BSVS).
