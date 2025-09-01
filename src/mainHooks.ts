@@ -57,7 +57,7 @@ export function installHooks() {
     Interceptor.attach(base.add(Offsets.DebuggerError),
         {
             onEnter(args) {
-                console.log("ERROR:", args[1].readCString());
+                console.log("ERROR:", args[0].readCString());
             },
         });
 
