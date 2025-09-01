@@ -9,14 +9,14 @@ export enum Offsets {
     HomePageStartGame = 0x58aba8,
     MessagingSend = 0x9b05fc,
     NativeFontFormatString = 0x0,
-    ByteStream = Process.pointerSize * 2,
     MessageManagerInstance = 0xda52e4,
     CreateMessageByType = 0x6f1b90,
     LogicLaserMessageFactory = 0xce0a9a,
-    Version = Process.pointerSize,
+    Version = 84,
+    ByteStream = 4,
     PayloadSize = 20,
-    PayloadPtr = 9 * Process.pointerSize,
+    PayloadPtr = 28,
     OperatorNew = 0xcb6380,
-    StringConstructor = 0x0,
+    StringConstructor = 0x9c428c,
     IsDev = 0x5ecbc8
 }

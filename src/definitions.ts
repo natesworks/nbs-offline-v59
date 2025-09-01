@@ -9,20 +9,20 @@ export const malloc = new NativeFunction(libc.getExportByName('malloc'), 'pointe
 
 export let player = new Player();
 
-export let createMessageByType: NativeFunction<NativePointer, [number, number]>;
+export let createMessageByType: NativeFunction<NativePointer, [NativePointer, number]>;
 export let operator_new: NativeFunction<NativePointer, [number]>;
 export let messageManagerReceiveMessage: NativeFunction<number, [NativePointerValue, NativePointerValue]>;
 export let stringCtor: NativeFunction<NativePointer, [NativePointer, NativePointer]>;
 
 export function load() {
-  createMessageByType = new NativeFunction(base.add(Offsets.CreateMessageByType), "pointer", ["int", "int"]);
-  operator_new = new NativeFunction(base.add(Offsets.OperatorNew), "pointer", ["int"]);
-  messageManagerReceiveMessage = new NativeFunction(base.add(Offsets.MessageManagerReceiveMessage), "int", ["pointer", "pointer"]);
-  stringCtor = new NativeFunction(base.add(Offsets.StringConstructor), "pointer", ["pointer", "pointer"]);
+    createMessageByType = new NativeFunction(base.add(Offsets.CreateMessageByType), "pointer", ["pointer", "int"]);
+    operator_new = new NativeFunction(base.add(Offsets.OperatorNew), "pointer", ["uint"]);
+    messageManagerReceiveMessage = new NativeFunction(base.add(Offsets.MessageManagerReceiveMessage), "int", ["pointer", "pointer"]);
+    stringCtor = new NativeFunction(base.add(Offsets.StringConstructor), "pointer", ["pointer", "pointer"]);
 }
 
 export function setBase(ptr: NativePointer) {
-  base = ptr;
+    base = ptr;
 }
 
 export const credits = `NBS Offline v1

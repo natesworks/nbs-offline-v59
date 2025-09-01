@@ -1,5 +1,5 @@
 import { Offsets } from "./offsets.js";
-import { base, createMessageByType, messageManagerReceiveMessage, operator_new } from "./definitions.js";
+import { base, createMessageByType, malloc, messageManagerReceiveMessage, operator_new } from "./definitions.js";
 import { PiranhaMessage } from "./piranhamessage.js";
 import { getMessageManagerInstance } from "./util.js";
 
@@ -8,7 +8,7 @@ export class Messaging {
         let version = id == 20104 ? 1 : 0;
         const factory = Memory.alloc(512);
         factory.writePointer(base.add(Offsets.LogicLaserMessageFactory));
-        let message = createMessageByType(factory.toUInt32(), id);
+        let message = createMessageByType(factory, id);
         message.add(Offsets.Version).writeS32(version);
         const payloadLength = PiranhaMessage.getByteStream(message).add(Offsets.PayloadSize);
         Memory.protect(payloadLength, 4, 'rw-');
