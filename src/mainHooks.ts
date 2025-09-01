@@ -4,6 +4,7 @@ import { base, player, } from "./definitions.js";
 import { Messaging } from "./messaging.js";
 import { LoginOkMessage } from "./packets/server/LoginOkMessage.js";
 import { OwnHomeDataMessage } from "./packets/server/OwnHomeDataMessage.js";
+import { decodeString } from "./util.js";
 
 export function installHooks() {
 
@@ -52,6 +53,30 @@ export function installHooks() {
             return 0;
         }, "int", ["pointer", "pointer"])
     );
+
+    Interceptor.attach(base.add(0x722624),
+        {
+            onEnter(args) {
+                console.log("pass");
+            },
+            onLeave(retval) {
+                console.log("pass2");
+            },
+        });
+
+    Interceptor.attach(base.add(0x5f06dc),
+        {
+            onLeave(retval) {
+                console.log("LogicClientAvatar::decode", retval.readPointer().add(16).sub(base));
+            },
+        });
+
+    Interceptor.attach(base.add(Offsets.DebuggerError),
+        {
+            onEnter(args) {
+                console.log("ERROR:", args[1].readCString());
+            },
+        });
 
     /*
     Interceptor.attach(base.add(Offsets.NativeFontFormatString),

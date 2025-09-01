@@ -6,6 +6,7 @@ export class OwnHomeDataMessage {
     static encode(player: Player): number[] {
         let stream = new ByteStream([]);
         const currentTime = Date.now() / 1000 + 3600 * 4;
+        console.log("Encoding OHD");
 
         stream.writeVint(1688816070);
         stream.writeVint(1191532375);
@@ -72,7 +73,7 @@ export class OwnHomeDataMessage {
         stream.writeString(player.supportedCreator);
 
         stream.writeVint(22); // int values
-        stream.writeDataReference(22, 1);
+        stream.writeDataReference(2, 1);
         stream.writeDataReference(3, 0); /// tokens gained
         stream.writeDataReference(4, 0); // trophies gained
         stream.writeDataReference(6, 0); // demo account
@@ -314,7 +315,7 @@ export class OwnHomeDataMessage {
 
         stream.writeLong(player.id[0], player.id[1]);
 
-        stream.writeVint(0); // notification count
+        stream.writeVint(0); // notification count; looks like crash is after this (not specifically next part)
 
         stream.writeVint(1);
         stream.writeBoolean(false);
@@ -346,6 +347,7 @@ export class OwnHomeDataMessage {
             stream.writeDataReference(16, Number(brawlerID)); // Brawler ID (convert string key to number)
         }
 
+        // battle card
         stream.writeVint(0);
         stream.writeVint(0);
         stream.writeVint(0);
@@ -356,20 +358,36 @@ export class OwnHomeDataMessage {
         stream.writeBoolean(false);
         stream.writeBoolean(false);
 
-        stream.writeVint(0);
+        stream.writeVint(0); // brawler battle cards
 
-        stream.writeVint(0); // starr drop data
+        // starr drop data
+        stream.writeVint(14);
+        stream.writeVint(0);
+        stream.writeInt(-1435281534);
+        stream.writeVint(0); // progression step in battles
+        stream.writeVint(0);
+        stream.writeVint(86400 * 24);
+        stream.writeVint(0);
+        stream.writeVint(0);
+        stream.writeVint(0);
+        stream.writeVint(0);
+        stream.writeVint(0);
+        stream.writeVint(0);
+        stream.writeBoolean(false);
 
         stream.writeBoolean(false);
         stream.writeBoolean(false);
         stream.writeBoolean(false);
         stream.writeVint(0);
         stream.writeBoolean(false);
+
+        // end LogicClientHome
 
         stream.writeVlong(player.id[0], player.id[1]);
         stream.writeVlong(player.id[0], player.id[1]);
         stream.writeVlong(player.id[0], player.id[1]);
         stream.writeString(player.name);
+        stream.writeBoolean(player.registered);
         stream.writeInt(-1);
 
         stream.writeVint(23);

@@ -18,5 +18,6 @@ export enum Offsets {
     PayloadPtr = 44,
     OperatorNew = 0xcb6380,
     StringConstructor = 0x9c428c,
-    IsDev = 0x5ecbc8
+    IsDev = 0x5ecbc8,
+    DebuggerError = 0x813fa0
 }
