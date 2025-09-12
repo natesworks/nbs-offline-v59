@@ -11,12 +11,12 @@ export class Player {
     starpoints = 0;
     trophies = 0;
     highestTrophies = 0;
-    trophyRoadTier = 1;
+    trophyRoadTier = 10000;
     xp = 0;
     tokens = 0;
     level = 1;
     gems = 0;
-    supportedCreator = "nbs.brawlmods.com";
+    supportedCreator = "Natesworks";
     region = "PL";
     tokenDoublers = 0;
     selectedBrawlers = [0, 1, 2];

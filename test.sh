@@ -1,4 +1,4 @@
 #!/usr/bin/bash
-frida-compile src/init.ts -o script.js -v
+npm run build
 adb forward tcp:27042 tcp:27042
 frida -p $(adb shell pidof com.natesworks.nbsoffline) -H 127.0.0.1:27042 -l script.js
