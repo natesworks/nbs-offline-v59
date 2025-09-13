@@ -39,9 +39,7 @@ export function installHooks() {
     Interceptor.attach(base.add(Offsets.HomePageStartGame),
         {
             onEnter: function (args) {
-                console.log("h");
                 args[3] = ptr(3);
-                console.log("h");
             }
         });
 
