@@ -22,10 +22,18 @@ export function installHooks() {
             }
         });
 
+    Interceptor.attach(base.add(Offsets.IsAuthenticated),
+        {
+            onLeave(retval) {
+                console.log(retval.readS32());
+                retval.replace(ptr(0));
+            },
+        })
+
     Interceptor.attach(base.add(Offsets.IsDev),
         {
             onLeave(retval) {
-                retval.replace(ptr(0));
+                retval.replace(ptr(1));
             },
         });
 
@@ -43,22 +51,36 @@ export function installHooks() {
             }
         });
 
+    Interceptor.attach(base.add(Offsets.IsAuthenticated),
+        {
+            onLeave(retval) {
+                console.log(retval.readS32());
+            },
+        });
+
+    Interceptor.replace(base.add(Offsets.MessagingSendMessage), new NativeCallback(function (a1: NativePointer, message: NativePointer) {
+        let type = PiranhaMessage.getMessageType(message);
+        console.log(type);
+        if (type == 17750) {
+            Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
+        }
+        return 1;
+    }, "int", ["pointer", "pointer"]));
+
     Interceptor.replace(
         base.add(Offsets.MessagingSend),
         new NativeCallback(function (self, message) {
+
+            /*
             let type = PiranhaMessage.getMessageType(message);
-            if (type == 10108)
-                return 0;
+            let length = PiranhaMessage.getEncodingLength(message);
 
             console.log("Type:", type);
+            console.log("Length:", length);
+            */
 
-            if (type == 10100 || type == 10101) { // ClientHelloMessage
-                Messaging.sendOfflineMessage(20104, LoginOkMessage.encode(player));
-                Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
-            }
-            else if (type == 14109) { // GoHomeFromOfflinePracticeMessage
-                Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
-            }
+            Messaging.sendOfflineMessage(20104, LoginOkMessage.encode(player));
+            Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
 
             PiranhaMessage.destroyMessage(message);
 

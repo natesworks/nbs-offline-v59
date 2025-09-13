@@ -13,6 +13,10 @@ export class PiranhaMessage {
         return destroyMessage(message); // no need to ret but looks better imo
     }
 
+    static getEncodingLength(message: NativePointer): number {
+        return this.getByteStream(message).add(Offsets.PayloadSize).readS32();
+    }
+
     static getByteStream(message : NativePointer) : NativePointer {
         return message.add(Offsets.ByteStream);
     }

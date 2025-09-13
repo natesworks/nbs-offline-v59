@@ -3,6 +3,7 @@ import { isAndroid } from "./definitions";
 export const Offsets = {
     ServerConnectionUpdate: isAndroid ? 0x45fa98 : 0x1fa618,
     HasConnectFailed: Process.pointerSize,
+    MessagingFirstArg: isAndroid ? 9 * Process.pointerSize : 72,
     State: isAndroid ? 16 : 24,
     GetMessageType: Process.pointerSize * 5,
     Destruct: Process.pointerSize * 7,
@@ -16,6 +17,7 @@ export const Offsets = {
     MessageManagerInstance: isAndroid ? 0xda52e4 : 0x11828d8,
     CreateMessageByType: isAndroid ? 0x6f1b90 : 0x3ecd4c,
     LogicLaserMessageFactory: isAndroid ? 0xce0a9a : 0x101891e,
+    IsAuthenticated: isAndroid ? 0x9b05e4 : 0xdbdc2c,
 
     Version: isAndroid ? 84 : 136,
     ByteStream: Process.pointerSize,
@@ -37,5 +39,8 @@ export const Offsets = {
     CustomButtonSetButtonListener: 0x803ce8,
 
     SettingsGetSelectedLanguage: isAndroid ? 0x0 : 0xda44,
-    LogicVersionIsChinaVersion: isAndroid ? 0x0 : 0x31d710
+    LogicVersionIsChinaVersion: isAndroid ? 0x0 : 0x31d710,
+
+    SendMessageFn1: 56,
+    SendMessageFn2: 8
 };
