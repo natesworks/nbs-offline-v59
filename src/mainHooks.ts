@@ -29,19 +29,6 @@ export function installHooks() {
             },
         });
 
-    if (!isAndroid) {
-        Interceptor.attach(base.add(Offsets.SettingsGetSelectedLanguage),
-            {
-                onEnter(args) {
-                    this.a1 = args[0];
-                },
-                onLeave(retval) {
-                    let str = stringCtor(this.a1, strPtr("EN"));
-                    retval.replace(str);
-                },
-            });
-    }
-
     Interceptor.attach(base.add(Offsets.MessageManagerReceiveMessage),
         {
             onLeave: function (retval) {

@@ -7,6 +7,7 @@ export const Offsets = {
     GetMessageType: Process.pointerSize * 5,
     Destruct: Process.pointerSize * 7,
     Decode: 3 * Process.pointerSize,
+    MessageManagerReceiveMessageThunk: 0x1f0c44,
     MessageManagerReceiveMessage: isAndroid ? 0x45318c : 0x1f0c48,
     HomePageStartGame: isAndroid ? 0x58aba8 : 0x2e18c4,
     MessagingSend: isAndroid ? 0x9b05fc : 0x0dbdc40,
