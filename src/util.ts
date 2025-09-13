@@ -9,12 +9,12 @@ export function decodeString(src: NativePointer): string | null {
     if (src.add(4).readInt() >= 8) {
         return src.add(8).readPointer().readUtf8String();
     }
-    return src.add(Process.pointerSize * 2).readUtf8String();
+    return src.add(8).readUtf8String();
 }
 
 export function strPtr(message : string) {
     var charPtr = malloc(message.length + 1);
-    (Memory as any).writeUtf8String(charPtr, message);
+    charPtr.writeUtf8String(message);
     return charPtr
 }
 

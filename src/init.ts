@@ -1,4 +1,4 @@
-import { base, load, player, setBase } from "./definitions.js";
+import { base, isAndroid, load, player, setBase } from "./definitions.js";
 import { installHooks } from "./mainHooks.js";
 
 function waitForModule(name: string, intervalMs = 10): Promise<NativePointer> {
@@ -14,10 +14,12 @@ function waitForModule(name: string, intervalMs = 10): Promise<NativePointer> {
 }
 
 (async () => {
-    setBase(await waitForModule("libg.so"));
+    setBase(await waitForModule(isAndroid ? "libg.so" : "laser"));
     console.log(`libg.so loaded at: ${base}`);
     load();
-    installHooks();
+    setImmediate(() => {
+        installHooks();
+    });
 })();
 
 for (const brawlerKey in player.ownedBrawlers) {

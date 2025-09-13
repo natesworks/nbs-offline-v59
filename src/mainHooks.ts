@@ -1,12 +1,18 @@
 import { Offsets } from "./offsets.js";
 import { PiranhaMessage } from "./piranhamessage.js";
-import { base, player, } from "./definitions.js";
+import { base, isAndroid, player, stringCtor, } from "./definitions.js";
 import { Messaging } from "./messaging.js";
 import { LoginOkMessage } from "./packets/server/LoginOkMessage.js";
 import { OwnHomeDataMessage } from "./packets/server/OwnHomeDataMessage.js";
-import { decodeString } from "./util.js";
+import { createStringObject, decodeString, strPtr } from "./util.js";
 
 export function installHooks() {
+    Interceptor.attach(base.add(Offsets.DebuggerError),
+        {
+            onEnter(args) {
+                console.log("ERROR:", args[0].readCString());
+            },
+        });
 
     Interceptor.attach(base.add(Offsets.ServerConnectionUpdate),
         {
@@ -15,6 +21,26 @@ export function installHooks() {
                 args[0].add(Process.pointerSize).readPointer().add(Offsets.State).writeInt(5);
             }
         });
+
+    Interceptor.attach(base.add(Offsets.IsDev),
+        {
+            onLeave(retval) {
+                retval.replace(ptr(0));
+            },
+        });
+
+    if (!isAndroid) {
+        Interceptor.attach(base.add(Offsets.SettingsGetSelectedLanguage),
+            {
+                onEnter(args) {
+                    this.a1 = args[0];
+                },
+                onLeave(retval) {
+                    let str = stringCtor(this.a1, strPtr("EN"));
+                    retval.replace(str);
+                },
+            });
+    }
 
     Interceptor.attach(base.add(Offsets.MessageManagerReceiveMessage),
         {
@@ -26,7 +52,9 @@ export function installHooks() {
     Interceptor.attach(base.add(Offsets.HomePageStartGame),
         {
             onEnter: function (args) {
+                console.log("h");
                 args[3] = ptr(3);
+                console.log("h");
             }
         });
 
@@ -34,7 +62,6 @@ export function installHooks() {
         base.add(Offsets.MessagingSend),
         new NativeCallback(function (self, message) {
             let type = PiranhaMessage.getMessageType(message);
-
             if (type == 10108)
                 return 0;
 
@@ -54,13 +81,6 @@ export function installHooks() {
         }, "int", ["pointer", "pointer"])
     );
 
-    Interceptor.attach(base.add(Offsets.DebuggerError),
-        {
-            onEnter(args) {
-                console.log("ERROR:", args[0].readCString());
-            },
-        });
-
     /*
     Interceptor.attach(base.add(Offsets.NativeFontFormatString),
         {
@@ -69,4 +89,6 @@ export function installHooks() {
             },
         });
     */
+
+    console.log("Done");
 }

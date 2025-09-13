@@ -1,9 +1,11 @@
 import { Offsets } from "./offsets.js";
 import { Player } from "./player.js";
 
+export const isAndroid = Process.platform === "linux";
+
 export let base = NULL;
 
-export const libc = Process.getModuleByName('libc.so');;
+export const libc = isAndroid ? Process.getModuleByName('libc.so') : Process.getModuleByName('libSystem.B.dylib');
 
 export const malloc = new NativeFunction(libc.getExportByName('malloc'), 'pointer', ['uint']);
 
@@ -17,7 +19,7 @@ export let stringCtor: NativeFunction<NativePointer, [NativePointer, NativePoint
 export function load() {
     createMessageByType = new NativeFunction(base.add(Offsets.CreateMessageByType), "pointer", ["pointer", "int"]);
     operator_new = new NativeFunction(base.add(Offsets.OperatorNew), "pointer", ["uint"]);
-    messageManagerReceiveMessage = new NativeFunction(base.add(Offsets.MessageManagerReceiveMessage), "int", ["pointer", "pointer"]);
+    messageManagerReceiveMessage = new NativeFunction(base.add(Offsets.MessageManagerReceiveMessage - 4), "int", ["pointer", "pointer"]);
     stringCtor = new NativeFunction(base.add(Offsets.StringConstructor), "pointer", ["pointer", "pointer"]);
 }
 
