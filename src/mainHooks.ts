@@ -1,10 +1,11 @@
 import { Offsets } from "./offsets.js";
 import { PiranhaMessage } from "./piranhamessage.js";
-import { base, isAndroid, player, stringCtor, } from "./definitions.js";
+import { base, isAndroid, messagingSend, player, stringCtor, } from "./definitions.js";
 import { Messaging } from "./messaging.js";
 import { LoginOkMessage } from "./packets/server/LoginOkMessage.js";
 import { OwnHomeDataMessage } from "./packets/server/OwnHomeDataMessage.js";
 import { createStringObject, decodeString, strPtr } from "./util.js";
+import { BattleEndMessage } from "./packets/server/BattleEndMessage.js";
 
 export function installHooks() {
     Interceptor.attach(base.add(Offsets.DebuggerError),
@@ -22,18 +23,24 @@ export function installHooks() {
             }
         });
 
-    Interceptor.attach(base.add(Offsets.IsAuthenticated),
-        {
-            onLeave(retval) {
-                console.log(retval.readS32());
-                retval.replace(ptr(0));
-            },
-        })
-
     Interceptor.attach(base.add(Offsets.IsDev),
         {
             onLeave(retval) {
                 retval.replace(ptr(1));
+            },
+        });
+
+    Interceptor.attach(base.add(Offsets.IsDeveloperBuild),
+        {
+            onLeave(retval) {
+                retval.replace(ptr(1));
+            },
+        });
+
+    Interceptor.attach(base.add(Offsets.IsProd),
+        {
+            onLeave(retval) {
+                retval.replace(ptr(0));
             },
         });
 
@@ -58,12 +65,11 @@ export function installHooks() {
             },
         });
 
-    Interceptor.replace(base.add(Offsets.MessagingSendMessage), new NativeCallback(function (a1: NativePointer, message: NativePointer) {
-        let type = PiranhaMessage.getMessageType(message);
-        console.log(type);
-        if (type == 17750) {
-            Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
-        }
+    Interceptor.replace(base.add(Offsets.MessagingSendMessage), new NativeCallback(function (messageManager: NativePointer, message: NativePointer) {
+        let messaging = messageManager.add(Offsets.Messaging).readPointer();
+        PiranhaMessage.encode(message);
+        messagingSend(messaging.add(Offsets.Messaging), message);
+
         return 1;
     }, "int", ["pointer", "pointer"]));
 
@@ -71,16 +77,19 @@ export function installHooks() {
         base.add(Offsets.MessagingSend),
         new NativeCallback(function (self, message) {
 
-            /*
             let type = PiranhaMessage.getMessageType(message);
             let length = PiranhaMessage.getEncodingLength(message);
 
             console.log("Type:", type);
             console.log("Length:", length);
-            */
-
-            Messaging.sendOfflineMessage(20104, LoginOkMessage.encode(player));
-            Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
+            if (type == 10100) { // ifs > switch
+                Messaging.sendOfflineMessage(20104, LoginOkMessage.encode(player));
+                Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
+            } else if (type == 14110) {
+                Messaging.sendOfflineMessage(23456, BattleEndMessage.encode(player));
+            } else if (type == 17750) {
+                Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
+            }
 
             PiranhaMessage.destroyMessage(message);
 

@@ -260,4 +260,15 @@ export class ByteStream {
         if (high != 0)
             this.writeVint(low);
     }
+
+    writeHexa(hex: string) {
+        this.bitoffset = 0;
+
+        for (let i = 0; i < hex.length; i += 2) {
+            const byteStr = hex.substr(i, 2);
+            const byte = parseInt(byteStr, 16);
+
+            this.writeByte(byte);
+        }
+    }
 }

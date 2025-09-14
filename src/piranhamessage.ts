@@ -1,3 +1,4 @@
+import { base } from "./definitions.js";
 import { Offsets } from "./offsets.js";
 
 export class PiranhaMessage {
@@ -14,10 +15,16 @@ export class PiranhaMessage {
     }
 
     static getEncodingLength(message: NativePointer): number {
-        return this.getByteStream(message).add(Offsets.PayloadSize).readS32();
+        return this.getByteStream(message).add(Offsets.PayloadOffset).readS32();
     }
 
-    static getByteStream(message : NativePointer) : NativePointer {
+    static getByteStream(message: NativePointer): NativePointer {
         return message.add(Offsets.ByteStream);
+    }
+
+    static encode(message: NativePointer): NativePointer {
+        let vtable = message.readPointer();
+        const encode = new NativeFunction(vtable.add(Offsets.Encode).readPointer(), 'pointer', ['pointer']);
+        return encode(message);
     }
 }
