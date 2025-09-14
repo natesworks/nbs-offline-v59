@@ -7,6 +7,7 @@ import { OwnHomeDataMessage } from "./packets/server/OwnHomeDataMessage.js";
 import { createStringObject, decodeString, strPtr } from "./util.js";
 import { BattleEndMessage } from "./packets/server/BattleEndMessage.js";
 import { ByteStream } from "./bytestream.js";
+import { AskForBattleEndMessage } from "./packets/client/AskForBattleEndMessage.js";
 
 export function installHooks() {
     Interceptor.attach(base.add(Offsets.DebuggerError),
@@ -83,20 +84,22 @@ export function installHooks() {
 
             console.log("Type:", type);
             console.log("Length:", length);
-            if (type == 10100) { // ifs > switch
-                Messaging.sendOfflineMessage(20104, LoginOkMessage.encode(player));
-                Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
-            } else if (type == 14110) {
-                Messaging.sendOfflineMessage(23456, BattleEndMessage.encode(player));
-            } else if (type == 17750) {
-                Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
-            }
             let payloadPtr = PiranhaMessage.getByteStream(message).add(Offsets.PayloadPtr).readPointer();
             let payload = payloadPtr.readByteArray(length);
             if (payload !== null) {
-                let arr = Array.from(new Uint8Array(payload));
-                console.log("Stream dump:", arr);
+                let stream = new ByteStream(Array.from(new Uint8Array(payload)));
+                console.log("Stream dump:", stream.payload);
+
+                if (type == 10100) { // ifs > switch
+                    Messaging.sendOfflineMessage(20104, LoginOkMessage.encode(player));
+                    Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
+                } else if (type == 17750) {
+                    Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
+                } else if (type == 14110) {
+                    Messaging.sendOfflineMessage(23456, BattleEndMessage.encode(player, AskForBattleEndMessage.decode(player, stream)));
+                }
             }
+
             PiranhaMessage.destroyMessage(message);
 
             return 0;
