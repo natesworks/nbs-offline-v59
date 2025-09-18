@@ -1,6 +1,6 @@
-# NBS Offline V62
+# NBS Offline V59
 
-An offline client by Natesworks. 
+An offline client by Natesworks. Supports Android and iOS.
 
 ## Credits
 
