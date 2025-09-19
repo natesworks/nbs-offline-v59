@@ -1,0 +1,1 @@
+export const isAndroid = Process.platform === "linux";

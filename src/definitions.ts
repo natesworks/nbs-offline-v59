@@ -1,7 +1,6 @@
-import { Offsets } from "./offsets.js";
-import { Player } from "./player.js";
-
-export const isAndroid = Process.platform === "linux";
+import { Offsets } from "./offsets";
+import { isAndroid } from "./platform";
+import { Player } from "./player";
 
 export let base = NULL;
 

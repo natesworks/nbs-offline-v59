@@ -1,4 +1,4 @@
-import { isAndroid } from "./definitions";
+import { isAndroid } from "./platform";
 
 export const Offsets = {
     ServerConnectionUpdate: isAndroid ? 0x45fa98 : 0x1fa618,
@@ -11,7 +11,7 @@ export const Offsets = {
     MessageManagerReceiveMessageThunk: 0x1f0c44,
     MessageManagerReceiveMessage: isAndroid ? 0x45318c : 0x1f0c48,
     HomePageStartGame: isAndroid ? 0x58aba8 : 0x2e18c4,
-    MessagingSend: isAndroid ? 0x9b05fc : 0x0dbdc40,
+    MessagingSend: isAndroid ? 0x9b05fc : 0xdbdc40,
     MessagingSendMessage: isAndroid ? 0x452fd0 : 0x1f0b98,
     NativeFontFormatString: 0x0, // todo
     MessageManagerInstance: isAndroid ? 0xda52e4 : 0x11828d8,

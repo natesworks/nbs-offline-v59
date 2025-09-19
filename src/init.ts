@@ -1,5 +1,6 @@
-import { base, isAndroid, load, player, setBase } from "./definitions.js";
+import { base, load, player, setBase } from "./definitions.js";
 import { installHooks } from "./mainHooks.js";
+import { isAndroid } from "./platform.js";
 
 function waitForModule(name: string, intervalMs = 10): Promise<NativePointer> {
     return new Promise((resolve) => {
@@ -14,8 +15,10 @@ function waitForModule(name: string, intervalMs = 10): Promise<NativePointer> {
 }
 
 (async () => {
-    setBase(await waitForModule(isAndroid ? "libg.so" : "laser"));
-    console.log(`libg.so loaded at: ${base}`);
+    let library = isAndroid ? "libg.so" : "laser";
+    setBase(await waitForModule(library));
+    console.log("isAndroid", isAndroid);
+    console.log(`${library} loaded at: ${base}`);
     load();
     setImmediate(() => {
         installHooks();

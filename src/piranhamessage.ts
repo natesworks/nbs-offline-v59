@@ -15,7 +15,10 @@ export class PiranhaMessage {
     }
 
     static getEncodingLength(message: NativePointer): number {
-        return this.getByteStream(message).add(Offsets.PayloadOffset).readS32();
+        let stream = this.getByteStream(message);
+        let size = stream.add(Offsets.PayloadSize).readS32();
+        let offset = stream.add(Offsets.PayloadOffset).readS32();
+        return offset > size ? offset : size;
     }
 
     static getByteStream(message: NativePointer): NativePointer {
