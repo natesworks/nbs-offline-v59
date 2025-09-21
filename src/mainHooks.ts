@@ -18,18 +18,10 @@ export function installHooks() {
             },
         });
 
-    Interceptor.attach(base.add(Offsets.ServerConnectionUpdate),
+    Interceptor.attach(base.add(Offsets.DebuggerWarning),
         {
-            onEnter: function (args) {
-                args[0].add(Process.pointerSize).readPointer().add(Offsets.HasConnectFailed).writeU8(0);
-                args[0].add(Process.pointerSize).readPointer().add(Offsets.State).writeInt(5);
-            }
-        });
-
-    Interceptor.attach(base.add(Offsets.IsDev),
-        {
-            onLeave(retval) {
-                retval.replace(ptr(1));
+            onEnter(args) {
+                console.log("WARN:", args[0].readCString());
             },
         });
 
@@ -61,14 +53,7 @@ export function installHooks() {
             }
         });
 
-    Interceptor.attach(base.add(Offsets.IsAuthenticated),
-        {
-            onLeave(retval) {
-                console.log(retval.readS32());
-            },
-        });
-
-    Interceptor.replace(base.add(Offsets.MessagingSendMessage), new NativeCallback(function (messageManager: NativePointer, message: NativePointer) {
+    Interceptor.replace(base.add(Offsets.MessageManagerSendMessage), new NativeCallback(function (messageManager: NativePointer, message: NativePointer) {
         let messaging = messageManager.add(Offsets.Messaging).readPointer();
         PiranhaMessage.encode(message);
         messagingSend(messaging.add(Offsets.Messaging), message);
@@ -86,18 +71,27 @@ export function installHooks() {
             console.log("Type:", type);
             console.log("Length:", length);
             let payloadPtr = PiranhaMessage.getByteStream(message).add(Offsets.PayloadPtr).readPointer();
-            let payload = payloadPtr.readByteArray(length);
-            if (payload !== null) {
-                let stream = new ByteStream(Array.from(new Uint8Array(payload)));
-                console.log("Stream dump:", stream.payload);
+            let payload: ArrayBuffer | null = null;
+            try {
+                payload = payloadPtr.readByteArray(length);
+            } catch {
+                payloadPtr = PiranhaMessage.getByteStream(message).add(Offsets.PayloadPtr).readPointer();
+                payload = payloadPtr.readByteArray(length);
+            }
 
-                if (type == 10100) { // ifs > switch
-                    Messaging.sendOfflineMessage(20104, LoginOkMessage.encode(player));
-                    Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
-                } else if (type == 17750) {
+            if (type == 10100) { // ifs > switch
+                Messaging.sendOfflineMessage(20104, LoginOkMessage.encode(player));
+                Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
+            }
+
+            if (payload !== null && length != 0) {
+                let stream = new ByteStream(Array.from(new Uint8Array(payload)));
+                console.log("Stream dump:", hexdump(payload));
+
+                if (type == 17750) {
                     Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
                 } else if (type == 14110) { // erm execute shouldn't have these args :nerd:
-                    AskForBattleEndMessage.execute(player, stream);
+                    //AskForBattleEndMessage.execute(player, stream);
                 }
             }
 

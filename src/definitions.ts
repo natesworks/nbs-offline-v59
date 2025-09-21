@@ -19,8 +19,8 @@ export let showFloaterText: NativeFunction<number, [NativePointer, NativePointer
 
 export function load() {
     createMessageByType = new NativeFunction(base.add(Offsets.CreateMessageByType), "pointer", ["pointer", "int"]);
-    operator_new = new NativeFunction(base.add(Offsets.OperatorNew), "pointer", ["uint"]);
-    messageManagerReceiveMessage = new NativeFunction(base.add(isAndroid ? Offsets.MessageManagerReceiveMessage : Offsets.MessageManagerReceiveMessageThunk), "int", ["pointer", "pointer"]);
+    operator_new = new NativeFunction(base.add(Offsets.OperatorNew), "pointer", ["ulong"]);
+    messageManagerReceiveMessage = new NativeFunction(base.add(Offsets.MessageManagerReceiveMessage), "int", ["pointer", "pointer"]);
     stringCtor = new NativeFunction(base.add(Offsets.StringConstructor), "pointer", ["pointer", "pointer"]);
     messagingSend = new NativeFunction(base.add(Offsets.MessagingSend), "bool", ["pointer", "pointer"]);
     showFloaterText = new NativeFunction(base.add(Offsets.GUIShowFloaterTextAtDefaultPos), "int", ["pointer", "pointer", "int", "float"]);

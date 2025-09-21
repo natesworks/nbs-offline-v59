@@ -1,8 +1,14 @@
 import { base, malloc, stringCtor } from "./definitions.js";
 import { Offsets } from "./offsets.js";
 
+export function toHex(val: number): string {
+    return "0x" + val.toString(16);
+}
+
 export function getMessageManagerInstance(): NativePointer {
-    return base.add(Offsets.MessageManagerInstance).readPointer();
+    let instance = base.add(Offsets.MessageManagerInstance).readPointer();
+    console.log("MessageManager::sm_pInstance", toHex(instance.toUInt32()));
+    return instance;
 }
 
 export function decodeString(src: NativePointer): string | null {
