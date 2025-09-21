@@ -1,4 +1,4 @@
-import { base, malloc, stringCtor} from "./definitions.js";
+import { base, malloc, stringCtor } from "./definitions.js";
 import { Offsets } from "./offsets.js";
 
 export function getMessageManagerInstance(): NativePointer {
@@ -12,7 +12,7 @@ export function decodeString(src: NativePointer): string | null {
     return src.add(8).readUtf8String();
 }
 
-export function strPtr(message : string) {
+export function strPtr(message: string) {
     var charPtr = malloc(message.length + 1);
     charPtr.writeUtf8String(message);
     return charPtr
@@ -67,4 +67,16 @@ export function stringToUtf8Array(str: string): Uint8Array {
         }
     }
     return new Uint8Array(utf8)
+}
+
+export function waitForModule(name: string, intervalMs = 10): Promise<NativePointer> {
+    return new Promise((resolve) => {
+        const interval = setInterval(() => {
+            const handle = Process.getModuleByName(name).base;
+            if (handle) {
+                clearInterval(interval);
+                resolve(handle);
+            }
+        }, intervalMs);
+    });
 }

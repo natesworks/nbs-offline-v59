@@ -70,11 +70,11 @@ export class ByteStream {
         return utf8ArrayToString(new Uint8Array(bytes));
     }
 
-    writeDataReference(high: number, low: number) {
+    writeDataReference(val : Long) {
         this.bitoffset = 0;
-        this.writeVint(high);
-        if (high != 0)
-            this.writeVint(low);
+        this.writeVint(val.high);
+        if (val.high != 0)
+            this.writeVint(val.low);
     }
 
     readVint(): number {

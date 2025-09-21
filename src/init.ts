@@ -1,17 +1,13 @@
-import { base, load, player, setBase } from "./definitions.js";
-import { installHooks } from "./mainHooks.js";
-import { isAndroid } from "./platform.js";
+import { base, load, player, setBase, showFloaterText } from "./definitions";
+import { installHooks } from "./mainHooks";
+import { isAndroid } from "./platform";
+import { createStringObject, waitForModule } from "./util";
 
-function waitForModule(name: string, intervalMs = 10): Promise<NativePointer> {
-    return new Promise((resolve) => {
-        const interval = setInterval(() => {
-            const handle = Process.getModuleByName(name).base;
-            if (handle) {
-                clearInterval(interval);
-                resolve(handle);
-            }
-        }, intervalMs);
-    });
+for (const brawlerKey in player.ownedBrawlers) {
+    const brawler = player.ownedBrawlers[brawlerKey];
+    for (const skin of brawler.skins) {
+        player.ownedSkins.push(skin);
+    }
 }
 
 (async () => {
@@ -24,10 +20,3 @@ function waitForModule(name: string, intervalMs = 10): Promise<NativePointer> {
         installHooks();
     });
 })();
-
-for (const brawlerKey in player.ownedBrawlers) {
-    const brawler = player.ownedBrawlers[brawlerKey];
-    for (const skin of brawler.skins) {
-        player.ownedSkins.push(skin);
-    }
-}

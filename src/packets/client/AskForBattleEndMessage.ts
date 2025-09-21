@@ -1,8 +1,10 @@
-import { Player } from "../../player.js";
-import { ByteStream } from "../../bytestream.js";
-import { Config } from "../../config.js";
-import { Hero } from "../../hero.js";
-import { BattleEndData } from "../../battleenddata.js";
+import { Player } from "../../player";
+import { ByteStream } from "../../bytestream";
+import { Config } from "../../config";
+import { Hero } from "../../hero";
+import { BattleEndData } from "../../battleenddata";
+import { Messaging } from "../../messaging";
+import { BattleEndMessage } from "../server/BattleEndMessage";
 
 export class AskForBattleEndMessage {
     static decode(player: Player, stream: ByteStream): BattleEndData {
@@ -19,5 +21,10 @@ export class AskForBattleEndMessage {
 
         console.log("AskBattleEndMessage:", JSON.stringify(heroes, null, 2));
         return new BattleEndData(gamemode, result, rank, mapID, heroes);
+    }
+
+    static execute(player: Player, stream: ByteStream): void {
+        let data = this.decode(player, stream);
+        Messaging.sendOfflineMessage(23456, BattleEndMessage.encode(player, data));
     }
 }

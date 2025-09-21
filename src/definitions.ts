@@ -15,6 +15,7 @@ export let operator_new: NativeFunction<NativePointer, [number]>;
 export let messageManagerReceiveMessage: NativeFunction<number, [NativePointerValue, NativePointerValue]>;
 export let stringCtor: NativeFunction<NativePointer, [NativePointer, NativePointer]>;
 export let messagingSend: NativeFunction<number, [NativePointer, NativePointer]>;
+export let showFloaterText: NativeFunction<number, [NativePointer, NativePointer, number, number]>;
 
 export function load() {
     createMessageByType = new NativeFunction(base.add(Offsets.CreateMessageByType), "pointer", ["pointer", "int"]);
@@ -22,7 +23,7 @@ export function load() {
     messageManagerReceiveMessage = new NativeFunction(base.add(isAndroid ? Offsets.MessageManagerReceiveMessage : Offsets.MessageManagerReceiveMessageThunk), "int", ["pointer", "pointer"]);
     stringCtor = new NativeFunction(base.add(Offsets.StringConstructor), "pointer", ["pointer", "pointer"]);
     messagingSend = new NativeFunction(base.add(Offsets.MessagingSend), "bool", ["pointer", "pointer"]);
-
+    showFloaterText = new NativeFunction(base.add(Offsets.GUIShowFloaterTextAtDefaultPos), "int", ["pointer", "pointer", "int", "float"]);
 }
 
 export function setBase(ptr: NativePointer) {

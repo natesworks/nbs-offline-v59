@@ -1,13 +1,14 @@
-import { Offsets } from "./offsets.js";
-import { PiranhaMessage } from "./piranhamessage.js";
-import { base, isAndroid, messagingSend, player, stringCtor, } from "./definitions.js";
-import { Messaging } from "./messaging.js";
-import { LoginOkMessage } from "./packets/server/LoginOkMessage.js";
-import { OwnHomeDataMessage } from "./packets/server/OwnHomeDataMessage.js";
-import { createStringObject, decodeString, strPtr } from "./util.js";
-import { BattleEndMessage } from "./packets/server/BattleEndMessage.js";
-import { ByteStream } from "./bytestream.js";
-import { AskForBattleEndMessage } from "./packets/client/AskForBattleEndMessage.js";
+import { Offsets } from "./offsets";
+import { PiranhaMessage } from "./piranhamessage";
+import { base, messagingSend, player, stringCtor, } from "./definitions";
+import { Messaging } from "./messaging";
+import { LoginOkMessage } from "./packets/server/LoginOkMessage";
+import { OwnHomeDataMessage } from "./packets/server/OwnHomeDataMessage";
+import { createStringObject, decodeString, strPtr } from "./util";
+import { BattleEndMessage } from "./packets/server/BattleEndMessage";
+import { ByteStream } from "./bytestream";
+import { AskForBattleEndMessage } from "./packets/client/AskForBattleEndMessage";
+import { isAndroid } from "./platform";
 
 export function installHooks() {
     Interceptor.attach(base.add(Offsets.DebuggerError),
@@ -95,8 +96,8 @@ export function installHooks() {
                     Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
                 } else if (type == 17750) {
                     Messaging.sendOfflineMessage(24101, OwnHomeDataMessage.encode(player));
-                } else if (type == 14110) {
-                    Messaging.sendOfflineMessage(23456, BattleEndMessage.encode(player, AskForBattleEndMessage.decode(player, stream)));
+                } else if (type == 14110) { // erm execute shouldn't have these args :nerd:
+                    AskForBattleEndMessage.execute(player, stream);
                 }
             }
 

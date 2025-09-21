@@ -44,6 +44,8 @@ export const Offsets = {
     MovieClipSetChildVisible: isAndroid ? 0x0 : 0xbc543c,
     ScreenGetWidth: isAndroid ? 0x0 : 0xde009c,
     ScreenGetHeight: isAndroid ? 0x0 : 0xde00a8,
+    GUIShowFloaterTextAtDefaultPos: isAndroid ? 0x0 : 0x99160,
+    GUIInstance: isAndroid ? 0x0 : 0x11827d0,
 
     SettingsGetSelectedLanguage: isAndroid ? 0x0 : 0xda44,
     LogicVersionIsChinaVersion: isAndroid ? 0x0 : 0x31d710,
