@@ -1,4 +1,4 @@
-# NBS Offline V59
+# NBS Offline V62
 
 An offline client that supports Android and iOS.
 
@@ -11,4 +11,4 @@ An offline client that supports Android and iOS.
 
 ## Credits
 
-OwnHomeDataMessage structure by Soufgame.
+OwnHomeDataMessage dump from Soufgame.
