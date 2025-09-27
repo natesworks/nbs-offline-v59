@@ -1,9 +1,10 @@
 import { Brawler } from "./brawler.js";
+import { Long } from "./long.js";
 
 export class Player {
     name = "Natesworks";
     token = "pXrvhSEPBUQo70jmePrPVQmHJHUQMrpWav82U1kH";
-    id = [0, 1];
+    id = new Long(0, 1);
     registered = true;
     namecolor = 9;
     thumbnail = 0;

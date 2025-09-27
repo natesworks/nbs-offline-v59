@@ -17,6 +17,11 @@ export let stringCtor: NativeFunction<NativePointer, [NativePointer, NativePoint
 export let messagingSend: NativeFunction<number, [NativePointer, NativePointer]>;
 export let showFloaterText: NativeFunction<number, [NativePointer, NativePointer, number, number]>;
 
+export let factory: NativePointer;
+export function setFactory(fac: NativePointer) {
+    factory = fac;
+}
+
 export function load() {
     createMessageByType = new NativeFunction(base.add(Offsets.CreateMessageByType), "pointer", ["pointer", "int"]);
     operator_new = new NativeFunction(base.add(Offsets.OperatorNew), "pointer", ["ulong"]);

@@ -1,14 +1,47 @@
-import { base, malloc, stringCtor } from "./definitions.js";
-import { Offsets } from "./offsets.js";
+import { base, malloc, stringCtor } from "./definitions";
+import { Offsets } from "./offsets";
 
 export function toHex(val: number): string {
     return "0x" + val.toString(16);
 }
 
 export function getMessageManagerInstance(): NativePointer {
-    let instance = base.add(Offsets.MessageManagerInstance).readPointer();
-    console.log("MessageManager::sm_pInstance", toHex(instance.toUInt32()));
+    let instance = base.add(Offsets.MessageManagerInstance);
+    console.log("MessageManager::sm_pInstance", toHex(instance.sub(base).toUInt32()));
     return instance;
+}
+
+export function getMessagingInstance(): NativePointer {
+    let instance = getMessageManagerInstance().add(Offsets.MessagingInstance).readPointer();
+    console.log("Messaging instance", toHex(instance.sub(base).toUInt32()));
+    return instance;
+}
+
+export function getFactory(): NativePointer {
+    let instance = getMessagingInstance().add(Offsets.LogicLaserMessageFactoryInstance).readPointer();
+    console.log("Factory instance", toHex(instance.sub(base).toUInt32()));
+    return instance;
+}
+
+export function backtrace(ctx: CpuContext | undefined): void {
+    const frames: any[] = Thread.backtrace(ctx, Backtracer.FUZZY);
+    let lastAddr = "";
+    let printed = 0;
+    for (let i = 0; i < frames.length; i++) {
+        const f = frames[i];
+        const addrStr = (typeof f === "string" || typeof f === "number") ? String(f) : f.toString();
+        if (addrStr === lastAddr) continue;
+        lastAddr = addrStr;
+        const address = ptr(addrStr);
+        const m = Process.findModuleByAddress(address);
+        if (m) {
+            const off = address.sub(m.base).toString();
+            console.log(`${printed.toString().padStart(2, " ")}  ${m.name} + ${off}  (${address})`);
+        } else {
+            console.log(`${printed.toString().padStart(2, " ")}  <unknown>  (${address})`);
+        }
+        printed++;
+    }
 }
 
 export function decodeString(src: NativePointer): string | null {
