@@ -2,11 +2,28 @@ import { Offsets } from "./offsets";
 import { base, } from "./definitions";
 import { installOfflineHooks } from "./offline";
 import { Config } from "./config";
-import { backtrace } from "./util";
+import { backtrace, decodeString } from "./util";
 import { crashFixes } from "./crashFixes";
 import { PiranhaMessage } from "./piranhamessage";
 
 export function installHooks() {
+    Interceptor.attach(base.add(0xae0eac),
+        {
+            onLeave(retval) {
+                console.log("ByteStream::readString", decodeString(retval));
+            },
+        });
+
+    Interceptor.attach(base.add(0xae2034),
+        {
+            onLeave(retval) {
+                if (retval.toInt32() == 7171) {
+                    console.log("Breakpoint hit");
+                    retval.replace(ptr(0));
+                }
+            },
+        });
+
     Interceptor.attach(base.add(Offsets.DebuggerError),
         {
             onEnter(args) {

@@ -247,10 +247,10 @@ export class ByteStream {
         }
     }
 
-    writeVlong(high: number, low: number) {
+    writeVlong(val: Long) {
         this.bitoffset = 0;
-        this.writeVint(high);
-        this.writeVint(low);
+        this.writeVint(val.high);
+        this.writeVint(val.low);
     }
 
     writeBoolean(value: boolean) {
