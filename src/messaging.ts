@@ -1,32 +1,36 @@
-import { Offsets } from "./offsets.js";
-import { base, createMessageByType, malloc, messageManagerReceiveMessage, operator_new } from "./definitions.js";
-import { PiranhaMessage } from "./piranhamessage.js";
-import { decodeString, getMessageManagerInstance } from "./util.js";
+import { Offsets } from "./offsets";
+import { base, createMessageByType, malloc, messageManagerReceiveMessage, operator_new } from "./definitions";
+import { PiranhaMessage } from "./piranhamessage";
+import { decodeString, getFactory, getMessageManagerInstance } from "./util";
 
 export class Messaging {
     static sendOfflineMessage(id: number, payload: number[]): NativePointer {
         let version = id == 20104 ? 1 : 0;
-        const factory = Memory.alloc(1024);
-        factory.writePointer(base.add(Offsets.LogicLaserMessageFactory));
-        let message = createMessageByType(factory, id);
-        message.add(Offsets.Version).writeS32(version);
-        const payloadLength = PiranhaMessage.getByteStream(message).add(Offsets.PayloadSize);
-        payloadLength.writeS32(payload.length);
+        let message = createMessageByType(getFactory(), id);
+        console.log(message);
+        message.add(Offsets.Version).writeInt(version);
+        PiranhaMessage.getByteStream(message).add(Offsets.PayloadSize).writeInt(payload.length);
         if (payload.length > 0) {
             let payloadPtr = operator_new(payload.length).writeByteArray(payload);
             PiranhaMessage.getByteStream(message).add(Offsets.PayloadPtr).writePointer(payloadPtr);
         }
-        let decode = new NativeFunction(
-            message
-                .readPointer()
-                .add(Offsets.Decode)
-                .readPointer(),
-            "void",
+        let decode = message
+            .readPointer()
+            .add(Offsets.Decode)
+            .readPointer();
+        console.log("Decode function:", decode.sub(base));
+        let decodeFn = new NativeFunction(
+            decode,
+            "int",
             ["pointer"]
         );
-        decode(message);
-        console.log("Message decoded succesfully");
-        messageManagerReceiveMessage(getMessageManagerInstance(), message);
+        let res = decodeFn(message);
+        console.log("Message decoded with return value", res);
+        try {
+            messageManagerReceiveMessage(getMessageManagerInstance(), message);
+        } catch (e) {
+            console.log(e);
+        }
         console.log("Message received");
         return message;
     }

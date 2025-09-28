@@ -15,13 +15,12 @@ export const Offsets = {
     NativeFontFormatString: isAndroid ? 0x0 : 0x0,
     MessageManagerInstance: isAndroid ? 0x109b910 : 0x0,
     CreateMessageByType: isAndroid ? 0x9a71e0 : 0x0,
-    LogicLaserMessageFactory: isAndroid ? 0xfc028e : 0x0,
 
     Version: isAndroid ? 136 : 0,
     ByteStream: Process.pointerSize,
     ByteStreamOffset: isAndroid ? 20 : 0,
     PayloadSize: isAndroid ? 24 : 0,
-    PayloadPtr: isAndroid ? 48 : 0,
+    PayloadPtr: isAndroid ? 56 : 0,
 
     OperatorNew: isAndroid ? 0xf63880 : 0x0,
     StringConstructor: isAndroid ? 0xc44060 : 0x0,
@@ -51,5 +50,11 @@ export const Offsets = {
     SettingsGetSelectedLanguage: isAndroid ? 0x0 : 0x0,
     LogicVersionIsChinaVersion: isAndroid ? 0x0 : 0x0,
 
-    Messaging: isAndroid ? 36 : 0
+    LogicCharacterServerHasUlti: isAndroid ? 0x96f24c : 0x0,
+
+    MessagingInstance: isAndroid ? 72 : 0,
+    LogicLaserMessageFactoryInstance: isAndroid ? 368 : 0,
+    MessagingSetFactory: isAndroid ? 0xc33e94 : 0x0,
+
+    MessagingEncryptAndWrite: isAndroid ? 0xc34bf8 : 0x0
 };
