@@ -56,5 +56,11 @@ export const Offsets = {
     LogicLaserMessageFactoryInstance: isAndroid ? 368 : 0,
     MessagingSetFactory: isAndroid ? 0xc33e94 : 0x0,
 
-    MessagingEncryptAndWrite: isAndroid ? 0xc34bf8 : 0x0
+    MessagingEncryptAndWrite: isAndroid ? 0xc34bf8 : 0x0,
+
+    LogicDailyDataGetIntValue: isAndroid ? 0x9e0ee8 : 0x0,
+    LogicClientAvatarIsTutorialState: isAndroid ? 0x873dec : 0x0,
+    HomeModeGetPlayerAvatar: isAndroid ? 0x0a23f44 : 0x0,
+
+    LogicConfDataIsModuloOn: isAndroid ? 0x9ddff4 : 0x0
 };

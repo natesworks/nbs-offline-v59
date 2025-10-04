@@ -1,23 +1,14 @@
-import { Long } from "./long";
-import { utf8ArrayToString, stringToUtf8Array } from "./util";
+import { stringToUtf8Array, utf8ArrayToString } from "./util";
 
 export class ByteStream {
     payload: number[];
     bitoffset: number;
     offset: number;
-    constructor(payload: number[]) {
-        this.payload = payload;
+
+    constructor(payload: Uint8Array | number[]) {
+        this.payload = Array.isArray(payload) ? [...payload] : Array.from(payload);
         this.bitoffset = 0;
         this.offset = 0;
-    }
-
-    readBytesLength(): number {
-        this.bitoffset = 0;
-        const b1 = this.payload[this.offset++];
-        const b2 = this.payload[this.offset++];
-        const b3 = this.payload[this.offset++];
-        const b4 = this.payload[this.offset++];
-        return ((b1 << 24) >>> 0) | (b2 << 16) | (b3 << 8) | b4;
     }
 
     readInt(): number {
@@ -48,82 +39,90 @@ export class ByteStream {
         return Number((BigInt(high) << 32n) | BigInt(low >>> 0));
     }
 
-    readString(maxCapacity: number = 9000000): string {
+    readString(maxCapacity: number = 512): string {
         this.bitoffset = 0;
-        const length = this.readBytesLength();
-        if (length < 0 || length > maxCapacity) {
-            throw Error("invalid string length");
-        }
-        const bytes = this.payload.slice(this.offset, this.offset + length);
-        this.offset += length;
-        return utf8ArrayToString(new Uint8Array(bytes));
-    }
+        const previousOffset = this.offset;
 
-    readStringReference(maxCapacity: number = 9000000): string {
-        this.bitoffset = 0;
-        const length = this.readBytesLength();
-        if (length < 0 || length > maxCapacity) {
+        const length = this.readInt();
+        if (length == -1) {
             return "";
         }
+
+        if (length <= 0 || length > maxCapacity) {
+            this.offset = previousOffset;
+            throw new Error("invalid string length");
+        }
+
+        if (this.offset + length > this.payload.length) {
+            this.offset = previousOffset;
+            throw new Error("string length exceeds payload");
+        }
+
         const bytes = this.payload.slice(this.offset, this.offset + length);
         this.offset += length;
-        return utf8ArrayToString(new Uint8Array(bytes));
+
+        const decoded = utf8ArrayToString(new Uint8Array(bytes));
+
+        return decoded;
     }
 
-    writeDataReference(val: Long) {
+    writeDataReference(val: { high: number; low: number }): void {
         this.bitoffset = 0;
         this.writeVint(val.high);
-        if (val.high != 0)
+        if (val.high != 0) {
             this.writeVint(val.low);
+        }
     }
 
     readVint(): number {
         let start = this.offset;
         this.bitoffset = 0;
+        if (start >= this.payload.length) {
+            throw new Error("insufficient bytes for vint");
+        }
         let b0 = this.payload[start];
-        this.offset = start + 1;
         let result = b0 & 0x3F;
-        if (b0 & 0x40) {
-            if (b0 & 0x80) {
-                let b1 = this.payload[start + 1];
-                result = result | ((b1 & 0x7F) << 6);
-                this.offset = start + 2;
-                if (b1 & 0x80) {
-                    let b2 = this.payload[start + 2];
-                    result = result | ((b2 & 0x7F) << 13);
-                    this.offset = start + 3;
-                    if (b2 & 0x80) {
-                        let b3 = this.payload[start + 3];
-                        result = result | ((b3 & 0x7F) << 20);
-                        this.offset = start + 4;
-                        if (b3 & 0x80) {
-                            let b4 = this.payload[start + 4];
-                            this.offset = start + 5;
-                            result = result | (b4 << 27);
-                        }
-                    }
-                }
+        this.offset = start + 1;
+        if (b0 & 0x80) {
+            if (this.offset >= this.payload.length) {
+                throw new Error("insufficient bytes for vint");
             }
-            result = -(result | (0xFFFFFFC0 << (((this.offset - start - 1) * 7) - 6)));
-        } else if (b0 & 0x80) {
-            let b1 = this.payload[start + 1];
-            result = result | ((b1 & 0x7F) << 6);
-            this.offset = start + 2;
+            let b1 = this.payload[this.offset];
+            result |= (b1 & 0x7F) << 6;
+            this.offset++;
             if (b1 & 0x80) {
-                let b2 = this.payload[start + 2];
-                result = result | ((b2 & 0x7F) << 13);
-                this.offset = start + 3;
+                if (this.offset >= this.payload.length) {
+                    throw new Error("insufficient bytes for vint");
+                }
+                let b2 = this.payload[this.offset];
+                result |= (b2 & 0x7F) << 13;
+                this.offset++;
                 if (b2 & 0x80) {
-                    let b3 = this.payload[start + 3];
-                    result = result | ((b3 & 0x7F) << 20);
-                    this.offset = start + 4;
+                    if (this.offset >= this.payload.length) {
+                        throw new Error("insufficient bytes for vint");
+                    }
+                    let b3 = this.payload[this.offset];
+                    result |= (b3 & 0x7F) << 20;
+                    this.offset++;
                     if (b3 & 0x80) {
-                        let b4 = this.payload[start + 4];
-                        this.offset = start + 5;
-                        result = result | (b4 << 27);
+                        if (this.offset >= this.payload.length) {
+                            throw new Error("insufficient bytes for vint");
+                        }
+                        let b4 = this.payload[this.offset];
+                        result |= (b4 & 0xF) << 27;
+                        this.offset++;
                     }
                 }
             }
+        }
+        if (b0 & 0x40) {
+            let extra_bytes = this.offset - start - 1;
+            let total_bits = 6 + 7 * extra_bytes;
+            if (extra_bytes === 4) {
+                total_bits -= 3;
+            }
+            let pow = 1 << total_bits;
+            result -= pow;
         }
         return result;
     }
@@ -135,11 +134,13 @@ export class ByteStream {
     }
 
     readBoolean(): boolean {
-        this.bitoffset = 0;
-        return this.payload[this.offset++] !== 0;
+        const val = (this.payload[this.offset] >> this.bitoffset) & 1;
+        this.bitoffset = (this.bitoffset + 1) & 7;
+        if (this.bitoffset === 0) this.offset++;
+        return val !== 0;
     }
 
-    readDataReference(): Long {
+    readDataReference(): { high: number; low: number } {
         const high = this.readVint();
         if (high === 0) {
             return { high: 0, low: 0 };
@@ -148,20 +149,20 @@ export class ByteStream {
         return { high, low };
     }
 
-    writeByte(value: number) {
+    writeByte(value: number): void {
         this.bitoffset = 0;
         this.payload.push(value & 0xFF);
         this.offset++;
     }
 
-    writeShort(value: number) {
+    writeShort(value: number): void {
         this.bitoffset = 0;
         this.payload.push((value >> 8) & 0xFF);
         this.payload.push(value & 0xFF);
         this.offset += 2;
     }
 
-    writeInt(value: number) {
+    writeInt(value: number): void {
         this.bitoffset = 0;
         this.payload.push((value >> 24) & 0xFF);
         this.payload.push((value >> 16) & 0xFF);
@@ -170,7 +171,7 @@ export class ByteStream {
         this.offset += 4;
     }
 
-    writeIntLE(value: number) {
+    writeIntLE(value: number): void {
         this.bitoffset = 0;
         this.payload.push(value & 0xFF);
         this.payload.push((value >> 8) & 0xFF);
@@ -179,8 +180,12 @@ export class ByteStream {
         this.offset += 4;
     }
 
-    writeString(str: string) {
+    writeString(str: string): void {
         this.bitoffset = 0;
+        if (str.length == 0) {
+            this.writeHexa("FFFFFFFF");
+            return;
+        }
         let bytes = stringToUtf8Array(str);
         this.writeInt(bytes.length);
         for (let i = 0; i < bytes.length; i++) {
@@ -188,7 +193,7 @@ export class ByteStream {
         }
     }
 
-    writeVint(value: number) {
+    writeVint(value: number): void {
         this.bitoffset = 0;
         if (value < 0) {
             if (value >= -63) {
@@ -247,13 +252,13 @@ export class ByteStream {
         }
     }
 
-    writeVlong(val: Long) {
+    writeVlong(val: { high: number; low: number }): void {
         this.bitoffset = 0;
         this.writeVint(val.high);
         this.writeVint(val.low);
     }
 
-    writeBoolean(value: boolean) {
+    writeBoolean(value: boolean): void {
         if (this.bitoffset == 0) {
             this.payload.push(0);
             this.offset++;
@@ -264,12 +269,13 @@ export class ByteStream {
         this.bitoffset = (this.bitoffset + 1) & 7;
     }
 
-    writeLong(long: Long) {
+    writeLong(long: { high: number; low: number }): void {
         this.bitoffset = 0;
         this.writeInt(long.high);
         this.writeInt(long.low);
     }
-    writeHexa(hex: string) {
+
+    writeHexa(hex: string): void {
         for (let i = 0; i < hex.length; i += 2) {
             const byteStr = hex.substring(i, i + 2);
             const byte = parseInt(byteStr, 16);

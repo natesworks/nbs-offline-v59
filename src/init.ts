@@ -1,5 +1,6 @@
 import { base, load, player, setBase, showFloaterText } from "./definitions";
 import { installHooks } from "./mainHooks";
+import { applyPatches } from "./patches";
 import { isAndroid } from "./platform";
 import { createStringObject, waitForModule } from "./util";
 
@@ -18,5 +19,6 @@ for (const brawlerKey in player.ownedBrawlers) {
     load();
     setImmediate(() => {
         installHooks();
+        applyPatches();
     });
 })();

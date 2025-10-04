@@ -1,6 +1,15 @@
 import { base, malloc, stringCtor } from "./definitions";
 import { Offsets } from "./offsets";
 
+export function nop(addrs: NativePointer[]) {
+    for (let addr of addrs) {
+        Memory.protect(addr, 4, 'rwx');
+        var w = new Arm64Writer(addr);
+        w.putNop();
+        w.flush();
+    }
+}
+
 export function toHex(val: number): string {
     return "0x" + val.toString(16);
 }
