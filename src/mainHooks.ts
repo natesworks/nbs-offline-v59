@@ -90,20 +90,23 @@ export function installHooks() {
         return self;
     }, "pointer", ["pointer"]));
 
+    Interceptor.attach(base.add(Offsets.TutorialState),
+        {
+            onLeave(retval) {
+                retval.replace(ptr(-1));
+            },
+        })
+
     Interceptor.attach(base.add(Offsets.LogicConfDataIsModuloOn),
         {
             onEnter(args) {
                 let id = args[2].toUInt32();
                 //console.log(id);
-                if (id == 141) { // HomeMode::isTutorialAndReengageTrackerEnabled
-                    this.value = 0;
-                }
             },
             onLeave(retval) {
                 if (this.value) retval.replace(ptr(this.value));
             },
         });
-
 
     Interceptor.attach(base.add(0x67f7c4),
         {

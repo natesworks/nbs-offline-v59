@@ -62,5 +62,7 @@ export const Offsets = {
     LogicClientAvatarIsTutorialState: isAndroid ? 0x873dec : 0x0,
     HomeModeGetPlayerAvatar: isAndroid ? 0x0a23f44 : 0x0,
 
-    LogicConfDataIsModuloOn: isAndroid ? 0x9ddff4 : 0x0
+    LogicConfDataIsModuloOn: isAndroid ? 0x9ddff4 : 0x0,
+
+    TutorialState: isAndroid ? 0x802e94 : 0x0 // idk real name
 };

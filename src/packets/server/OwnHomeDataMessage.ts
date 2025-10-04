@@ -9581,6 +9581,7 @@ export class OwnHomeDataMessage {
         stream.writeVint(0);
         stream.writeVint(-1);
         stream.writeVint(2);
+        
         stream.writeVint(0);
         stream.writeVint(0);
         stream.writeVint(0);
@@ -9601,9 +9602,10 @@ export class OwnHomeDataMessage {
         stream.writeVint(0);
         stream.writeVint(0);
         stream.writeVint(0);
-        stream.writeVint(0);
-        stream.writeVint(0);
-        stream.writeVint(1);
+
+        stream.writeVint(player.gems);
+        stream.writeVint(player.gems);
+        stream.writeVint(player.level);
         stream.writeVint(100);
         stream.writeVint(0);
         stream.writeVint(0);
