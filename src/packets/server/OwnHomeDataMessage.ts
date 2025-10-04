@@ -9612,10 +9612,10 @@ export class OwnHomeDataMessage {
         stream.writeVint(0);
         stream.writeVint(0);
         stream.writeVint(0);
-        stream.writeVint(2);
         stream.writeVint(2); // tutorial state
-        stream.writeVint(2);
-        stream.writeVint(2);
+        stream.writeVint(0);
+        stream.writeVint(0);
+        stream.writeVint(0);
         stream.writeString("");
         stream.writeVint(0);
         stream.writeVint(0);
